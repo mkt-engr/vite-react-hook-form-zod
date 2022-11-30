@@ -1,9 +1,30 @@
-function App() {
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type Inputs = {
+  example: string;
+  exampleRequired: string;
+  gender: string;
+};
+
+const App = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>();
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  console.log(watch("example"));
   return (
-    <div>
-      <h1>Vite React Hook Form Zod</h1>
-    </div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input defaultValue={"test"} {...register("example")} />
+      <input {...(register("exampleRequired"), { required: true })} />
+      {errors.exampleRequired && <span>This field is required</span>}
+      <input type="submit" />
+    </form>
   );
-}
+};
 
 export default App;
