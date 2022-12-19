@@ -12,16 +12,39 @@ const App = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>();
-
+  } = useForm<Inputs>({
+    defaultValues: {
+      example: "",
+      exampleRequired: "exampleRequired",
+    },
+  });
+  console.log(errors);
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
-  console.log(watch("example"));
+  const exampleOutPut = watch("example");
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <input defaultValue={"test"} {...register("example")} />
-      <input {...(register("exampleRequired"), { required: true })} />
-      {errors.exampleRequired && <span>This field is required</span>}
+      <input
+        {...register("example", {
+          required: "Must",
+          minLength: {
+            value: 4,
+            message: "Min length is 5",
+          },
+        })}
+      />
+      <p>{errors.example?.message}</p>
+      <p>{exampleOutPut}</p>
+      <input
+        {...register("exampleRequired", {
+          required: "Must",
+          maxLength: {
+            value: 5,
+            message: "Max length is 5",
+          },
+        })}
+      />
+      <p>{errors.exampleRequired?.message}</p>
       <input type="submit" />
     </form>
   );
