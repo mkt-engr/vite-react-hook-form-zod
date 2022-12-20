@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import WithMUI01 from "./WithMUI01";
-import "../style/styles.css";
+import { CssBaseline } from "@mui/material";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -18,6 +18,7 @@ const router = createBrowserRouter([
 ]);
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
+    <CssBaseline />
     <RouterProvider router={router} />
   </React.StrictMode>
 );
