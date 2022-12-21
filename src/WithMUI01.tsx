@@ -39,9 +39,11 @@ const WithMUI01 = () => {
         <h1>Form</h1>
         <Stack spacing={3}>
           <FormControl variant="standard">
-            <InputLabel htmlFor="firstName">FirstName</InputLabel>
-            <Input
-              id="firstName"
+            <TextField
+              variant="standard"
+              label="FirstName"
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
               {...register("firstName", {
                 required: "Must First Name",
                 minLength: {
@@ -50,12 +52,13 @@ const WithMUI01 = () => {
                 },
               })}
             />
-            {errors.firstName && <p>{errors.firstName.message}</p>}
           </FormControl>
           <FormControl variant="standard">
-            <InputLabel htmlFor="lastName">LastName</InputLabel>
-            <Input
-              id="lastName"
+            <TextField
+              variant="standard"
+              label="LastName"
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
               {...register("lastName", {
                 required: "Must Last Name",
                 minLength: {
