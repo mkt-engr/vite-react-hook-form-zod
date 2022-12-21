@@ -67,7 +67,6 @@ const WithMUI01 = () => {
                 },
               })}
             />
-            {errors.lastName && <p>{errors.lastName.message}</p>}
           </FormControl>
           <Button color="primary" variant="contained" type="submit">
             Submit
