@@ -1,21 +1,22 @@
-import Select from "react-select";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import {
-  Input,
-  InputLabel,
   FormControl,
   TextField,
-  Box,
   Container,
   Stack,
   Button,
 } from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 
-type IFormInput = {
-  firstName: string;
-  lastName: string;
-};
+//Zodのスキーマ
+const schema = z.object({
+  firstName: z.string().min(1, { message: "なんか入れて from Zod" }),
+  lastName: z.string().min(4, { message: "4文字以上入力して from Zod" }),
+  email: z.string().email({ message: "メールの形式で入れてくれよ" }),
+});
 
+type IFormInput = z.infer<typeof schema>;
 const WithMUI01 = () => {
   const {
     control,
@@ -24,9 +25,13 @@ const WithMUI01 = () => {
     formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
-      firstName: "",
+      firstName: "デフォの値",
       lastName: "",
+      email: "",
     },
+    resolver: zodResolver(schema),
+    // mode: "onBlur",//バリデーションをいつ行うか。modeを指定しない場合はonSubmit
+    // reValidateMode: "onBlur",//handleSubmit関数が実行された後再バリデーションをするタイミング。デフォはonChange
   });
   console.log({ errors });
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
@@ -44,13 +49,7 @@ const WithMUI01 = () => {
               label="FirstName"
               error={!!errors.firstName}
               helperText={errors.firstName?.message}
-              {...register("firstName", {
-                required: "Must First Name",
-                minLength: {
-                  value: 4,
-                  message: "First Name Min length is 4",
-                },
-              })}
+              {...register("firstName")}
             />
           </FormControl>
           <FormControl variant="standard">
@@ -59,15 +58,20 @@ const WithMUI01 = () => {
               label="LastName"
               error={!!errors.lastName}
               helperText={errors.lastName?.message}
-              {...register("lastName", {
-                required: "Must Last Name",
-                minLength: {
-                  value: 4,
-                  message: "Last Name Min length is 4",
-                },
-              })}
+              {...register("lastName")}
             />
           </FormControl>
+          <FormControl variant="standard">
+            <TextField
+              variant="standard"
+              label="Email"
+              error={!!errors.email}
+              helperText={errors.email?.message}
+              {...register("email")}
+              type="email"
+            />
+          </FormControl>
+
           <Button color="primary" variant="contained" type="submit">
             Submit
           </Button>
