@@ -5,6 +5,9 @@ import {
   Container,
   Stack,
   Button,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -14,6 +17,12 @@ const schema = z.object({
   firstName: z.string().min(1, { message: "なんか入れて from Zod" }),
   lastName: z.string().min(4, { message: "4文字以上入力して from Zod" }),
   email: z.string().email({ message: "メールの形式で入れてくれよ" }),
+  age: z
+    .number({
+      required_error: "Age is required",
+      invalid_type_error: "数値で入れてちょ",
+    })
+    .min(20, { message: "20以上でよろ" }),
 });
 
 type IFormInput = z.infer<typeof schema>;
@@ -71,7 +80,24 @@ const WithMUI01 = () => {
               type="email"
             />
           </FormControl>
-
+          <FormControl>
+            <TextField
+              id="demo-simple-select"
+              label="Age"
+              defaultValue=""
+              error={!!errors.age}
+              helperText={errors.age?.message}
+              {...register("age")}
+              select
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </TextField>
+          </FormControl>
           <Button color="primary" variant="contained" type="submit">
             Submit
           </Button>
