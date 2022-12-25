@@ -27,7 +27,7 @@ const schema = z.object({
       required_error: "Age is required",
       invalid_type_error: "数値で入れてちょ",
     })
-    .min(20, { message: "20以上でよろ" }),
+    .min(10, { message: "20以上でよろ" }),
   // gender: z.string({ invalid_type_error: "なんか入力してーや" }),
   gender: z.enum(["female", "male"], {
     // required_error: "fじえ",
@@ -38,9 +38,16 @@ const schema = z.object({
     // },
   }),
   hobbies: z
-    .enum(["sport", "trip", "reading books"])
-    .array()
-    .min(2, { message: "趣味は2個以上選んで" }),
+    .array(z.string(), {
+      invalid_type_error: "なんか以上選んで",
+    })
+    .refine(
+      (v) => {
+        console.log({ v });
+        return v.length > 1;
+      },
+      { message: "趣味は２個以上選べ at refine" }
+    ),
 });
 
 type IFormInput = z.infer<typeof schema>;
@@ -54,8 +61,9 @@ const WithMUI01 = () => {
   } = useForm<IFormInput>({
     defaultValues: {
       firstName: "デフォの値",
-      lastName: "",
-      email: "",
+      lastName: "デフォの値",
+      email: "t058de@gmail.com",
+      age: 10,
     },
     resolver: zodResolver(schema),
     // mode: "onBlur",//バリデーションをいつ行うか。modeを指定しない場合はonSubmit
@@ -67,7 +75,7 @@ const WithMUI01 = () => {
     console.log(data);
   };
   const hobbies = watch("hobbies");
-  console.log(hobbies);
+  // console.log(hobbies);
   return (
     <Container maxWidth="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -171,7 +179,7 @@ const WithMUI01 = () => {
               <FormControlLabel
                 control={<Checkbox {...register("hobbies")} />}
                 label="Reading Books"
-                value="reading books"
+                value="reading_books"
               />
             </FormGroup>
             <FormHelperText>{errors.hobbies?.message}</FormHelperText>
