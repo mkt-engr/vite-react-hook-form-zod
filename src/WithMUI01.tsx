@@ -6,6 +6,13 @@ import {
   Stack,
   Button,
   MenuItem,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  FormHelperText,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -14,13 +21,22 @@ import z from "zod";
 const schema = z.object({
   firstName: z.string().min(1, { message: "なんか入れて from Zod" }),
   lastName: z.string().min(4, { message: "4文字以上入力して from Zod" }),
-  email: z.string().email({ message: "メールの形式で入れてくれよ" }),
+  email: z.string().email({ message: "メールの形式で入れてくれよ from Zod" }),
   age: z
     .number({
       required_error: "Age is required",
       invalid_type_error: "数値で入れてちょ",
     })
     .min(20, { message: "20以上でよろ" }),
+  // gender: z.string({ invalid_type_error: "なんか入力してーや" }),
+  gender: z.enum(["female", "male"], {
+    // required_error: "fじえ",
+    // invalid_type_error: "type error from zod",
+    errorMap: (i, c) => {
+      console.log(i, c);
+      return { message: "errorMap" };
+    },
+  }),
 });
 
 type IFormInput = z.infer<typeof schema>;
@@ -42,6 +58,7 @@ const WithMUI01 = () => {
   });
   console.log({ errors });
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    //バリデーションを通過した時に実行される
     console.log(data);
   };
 
@@ -96,6 +113,74 @@ const WithMUI01 = () => {
               <MenuItem value={30}>Thirty</MenuItem>
             </TextField>
           </FormControl>
+          <FormControl error={!!errors.gender}>
+            <FormLabel id="demo-row-radio-buttons-group-label">
+              Gender
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+            >
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label="Female"
+                {...register("gender")}
+              />
+              <FormControlLabel
+                value="male"
+                control={<Radio />}
+                label="Male"
+                {...register("gender")}
+              />
+              <FormControlLabel
+                value="other"
+                control={<Radio />}
+                label="Other"
+                {...register("gender")}
+              />
+              <FormControlLabel
+                value="disabled"
+                disabled
+                control={<Radio />}
+                label="other"
+                {...register("gender")}
+              />
+            </RadioGroup>
+            <FormHelperText>{errors.gender?.message}</FormHelperText>
+          </FormControl>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  // checked={gilad}
+                  // onChange={handleChange}
+                  name="gilad"
+                />
+              }
+              label="Gilad Gray"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  // checked={jason}
+                  // onChange={handleChange}
+                  name="jason"
+                />
+              }
+              label="Jason Killian"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  // checked={antoine}
+                  // onChange={handleChange}
+                  name="antoine"
+                />
+              }
+              label="Antoine Llorca"
+            />
+          </FormGroup>
           <Button color="primary" variant="contained" type="submit">
             Submit
           </Button>
