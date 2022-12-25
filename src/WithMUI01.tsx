@@ -31,12 +31,16 @@ const schema = z.object({
   // gender: z.string({ invalid_type_error: "なんか入力してーや" }),
   gender: z.enum(["female", "male"], {
     // required_error: "fじえ",
-    // invalid_type_error: "type error from zod",
-    errorMap: (i, c) => {
-      console.log(i, c);
-      return { message: "errorMap" };
-    },
+    invalid_type_error: "FemaleかMaleでよろ from Zod",
+    // errorMap: (i, c) => {
+    //   console.log(i, c);
+    //   // return { message: "FemaleかMaleでよろ from Zod ErrorMap" };
+    // },
   }),
+  hobbies: z
+    .enum(["sport", "trip", "reading books"])
+    .array()
+    .min(2, { message: "趣味は2個以上選んで" }),
 });
 
 type IFormInput = z.infer<typeof schema>;
@@ -46,6 +50,7 @@ const WithMUI01 = () => {
     handleSubmit,
     register,
     formState: { errors },
+    watch,
   } = useForm<IFormInput>({
     defaultValues: {
       firstName: "デフォの値",
@@ -61,7 +66,8 @@ const WithMUI01 = () => {
     //バリデーションを通過した時に実行される
     console.log(data);
   };
-
+  const hobbies = watch("hobbies");
+  console.log(hobbies);
   return (
     <Container maxWidth="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -149,38 +155,27 @@ const WithMUI01 = () => {
             </RadioGroup>
             <FormHelperText>{errors.gender?.message}</FormHelperText>
           </FormControl>
-          <FormGroup row>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  // checked={gilad}
-                  // onChange={handleChange}
-                  name="gilad"
-                />
-              }
-              label="Gilad Gray"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  // checked={jason}
-                  // onChange={handleChange}
-                  name="jason"
-                />
-              }
-              label="Jason Killian"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  // checked={antoine}
-                  // onChange={handleChange}
-                  name="antoine"
-                />
-              }
-              label="Antoine Llorca"
-            />
-          </FormGroup>
+          <FormControl error={!!errors.hobbies}>
+            <FormLabel>Hobbies</FormLabel>
+            <FormGroup row>
+              <FormControlLabel
+                control={<Checkbox {...register("hobbies")} />}
+                label="Sport"
+                value="sport"
+              />
+              <FormControlLabel
+                control={<Checkbox {...register("hobbies")} />}
+                label="Trip"
+                value="trip"
+              />
+              <FormControlLabel
+                control={<Checkbox {...register("hobbies")} />}
+                label="Reading Books"
+                value="reading books"
+              />
+            </FormGroup>
+            <FormHelperText>{errors.hobbies?.message}</FormHelperText>
+          </FormControl>
           <Button color="primary" variant="contained" type="submit">
             Submit
           </Button>
